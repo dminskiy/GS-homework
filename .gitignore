@@ -2,3 +2,8 @@
 __pycache__
 
 test_full.csv
+venv
+HGBR_mape_8.8*
+HGBR_mape_8.9*
+predicted_for_HGBR_mape_8.8*
+predicted_for_HGBR_mape_8.9*
