@@ -17,7 +17,7 @@ LR = 0.01
 LOSS = "gamma"
 ITER = 50000  # 50000 (early stopping enabled by default at > 10k as per docs)
 MAX_LEAF_NODES = 60
-
+NUM_RUNS = 20
 
 if __name__ == "__main__":
     dataset_version = DatasetVersion.V1
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         RATE,
         DISTANCE,
         WEIGHT,
-        # PICKUP_DATE_DAY,
+        PICKUP_DATE_DAY,
         PICKUP_DATE_WEEK_DAY,
         PICKUP_DATE_YEAR,
         PICKUP_DATE_MONTH,
@@ -44,16 +44,16 @@ if __name__ == "__main__":
     print(f"Training Shape: {x_train.shape}")
 
     reg = HistGradientBoostingRegressor(
-        loss="gamma",
-        max_iter=10000,
-        learning_rate=0.01,
-        max_leaf_nodes=60,
+        loss=LOSS,
+        max_iter=ITER,
+        learning_rate=LR,
+        max_leaf_nodes=MAX_LEAF_NODES,
         categorical_features=[ORIGIN_ENCODED, DESTINATION_ENCODED],
     )
 
     best_score = 9999
     scores = []
-    for _ in tqdm(range(20), unit="Run"):
+    for _ in tqdm(range(NUM_RUNS), unit="Run"):
         reg.fit(x_train, y_train)
 
         preds = reg.predict(x_val)
