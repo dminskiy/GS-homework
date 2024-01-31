@@ -63,5 +63,5 @@ if __name__ == "__main__":
     plt.xlabel("Sample")
     plt.legend()
     plt.grid(True)
-    
+
     plt.savefig(os.path.join(VISIALISATIONS_DIR, "losses.png"))
