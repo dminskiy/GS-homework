@@ -59,9 +59,6 @@ def get_training_data(
         features=features,
     )
 
-    print("Full training data")
-    print(df.info())
-
     x_train = df.drop([RATE], axis=1)
     y_train = df[RATE]
 
