@@ -1,10 +1,10 @@
 # Solution to the Greenscreens.ai take-home assessment (Jan'24)
 
 ## Structure
-* Task 1 Description & Solution
-* Task 2 Description & Solution
-* Running Instructions
-* Directory Structure
+* [Task 1](#task-1): Description & Solution
+* [Task 2](#task-2): Description & Solution
+* [Running Instructions](#running-instructions)
+* [Directory Structure](#directory-structure)
 
 ## Task 1
 
@@ -127,6 +127,41 @@ The selection of the submission file is always a tricky process as it requires a
 In this case, I decided to opt for the solution with the best validation score achieved with the 50k iteration setup. The logic behind it is that although it represents a larger risk of overfitting to the validation score, the 10k alternative is more likely overfitted on the training set as it ran on it for longer (50k was early-stoped). I judged that it is better to overfit on validation since from the assessment of data visualisations the data distribution seems closer between validation and test than between train and test. I may be wrong and will look forward to finding out. 
 
 Note, I did not merge training and validation data before creating the final response. The upside of receiving ~2% more data was not enough to outweigh the downside of having a model that is not validated.
+
+### Update
+
+After the submission of the afore-described solution, the following conclusions were made:
+- The best test score (MAPE) was achieved by the solution with the lowest validation score, clearly indicating overfitting to the validation set. This is hardly surprising as selecting the final solution based on the lowest validation score out of 20 validation runs could only end in one result - overfitting.
+- The best test score was almost 1% MAPE off the desired 9%
+
+So when faced with the task of improving the test score, I focused on the following:
+1. Remove the validation set bias from the final selection.
+2. How can achieve a 0.8% improvement to get under 9% on the test set?
+
+### Improvements
+
+So when faced with the task of improving the test score, I focused on the following:
+1. Remove the validation set bias from the final selection.
+2. How can achieve a 0.8% improvement to get under 9% on the test set?
+
+To address the noticeable test set performance gap (~1% vs desired 9% MAPE), we can try several approaches. Firstly, we can ingest more data to improve prediction quality. Fortunately, we have an extra 5,000 validation set samples that we can use. Secondly, we can improve the model itself. Thirdly, we can expand the feature set we use for prediction. Finally, we can try introducing creative pre/post processing techniques to help bridge the gap.
+
+As for model improvements, I tried a few more models, including a KNN (`model_search/train_knn.py`), AdaBoost, and RandomForest (scripts not saved) but none of them were very promising with the best of them showing around 10.5-11% MAPE. So due to concerns about the time required to fine-tune potential candidates, I decided to explore other options first.
+
+Working with features, I wasn't fully convinced about the existing feature selection. To address this, I first analysed the feature importance of all 12 features using the permutation importance measure (`train_hgbr_fit_test_features.py`). It showed that despite valid_miles, origin and destination are by far the most important ones, all 12 features have a positive effect when tested with a validation set. Then, I double-checked that with an ablation study where I fixed a reasonably sized model (500 trees) to manage the training time and tried removing individual features and sub-sets of features. Both experiments showed that the best result is achieved when all the features are used. Hence, I returned the previously omitted calendar day feature.
+
+As for the creative pre/post-processing techniques, ensembling was employed to improve generalisation and gain the desired performance boost. A multi-model ensemble seemed the most promising option, as a combination of models with compatible performance but a different approach to achieving this result (eg KNN or an SVM) as compared to HGBR often yields superior performance. However, as previously mentioned, no candidates were found of such models that wouldn't require a long hyperparameter search. 
+Thus, it was decided to experiment with data-level ensembling, which also helped address the first focus point, preventing overfitting. Two options were proposed: (i) brute-force averaging of predictions across 20 runs (`train_hgbr_test_average.py`) and (ii) utilising a Bagging Regressor (`train_hgbr_test_bagging.py`) that essentially does a similar thing but in a more elegant and statistically correct way.
+
+Finally, I trained regressors using the full set of labelled data, ie the combination of training and validation sets.
+
+In conclusion, the following measures were taken to address the two focus areas outlined above:
+1. Expanding the feature set by returning the previously omitted calendar day feature
+2. Introducing more training data by utilising the validation set
+3. Employing ensembles to improve generalisation and, hopefully, performance.
+
+#### Results
+The proposed improvements yielded the desired result of sub-9% MAPE on the test set achieved with the averaging version of the updated solution.
 
 #### 9. Future Work
 It would be interesting to explore: 
