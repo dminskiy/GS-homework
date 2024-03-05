@@ -12,6 +12,8 @@ class DatasetVersion(Enum):
     ORIGINAL = auto()
     V1 = auto()
     V2 = auto()
+    V3 = auto()
+    V4 = auto()
 
 
 def load_data(
@@ -29,6 +31,10 @@ def load_data(
         data_dir = DATA_DIR_TR_V1
     elif dataset_version == DatasetVersion.V2:
         data_dir = DATA_DIR_TR_V2
+    elif dataset_version == DatasetVersion.V3:
+        data_dir = DATA_DIR_TR_V3
+    elif dataset_version == DatasetVersion.V4:
+        data_dir = DATA_DIR_TR_V4
     else:
         raise RuntimeError()
 
