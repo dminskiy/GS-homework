@@ -1,9 +1,8 @@
 .idea
 __pycache__
 
-test_full.csv
+trained_models
+final_predictions
+dataset/transformed_v4
+
 venv
-HGBR_mape_8.8*
-HGBR_mape_8.9*
-predicted_for_HGBR_mape_8.8*
-predicted_for_HGBR_mape_8.9*
