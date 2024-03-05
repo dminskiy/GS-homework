@@ -16,7 +16,7 @@ if __name__ == "__main__":
         dataset_version=DatasetVersion.V1, features=cols2load
     )
 
-    reg = KNeighborsRegressor(n_neighbors=12, weights="distance", algorithm='brute')
+    reg = KNeighborsRegressor(n_neighbors=12, weights="distance", algorithm="brute")
     reg.fit(x_train, y_train)
 
     preds = reg.predict(x_val)
